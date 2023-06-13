@@ -11,11 +11,8 @@ prompt = " ".join(args)
 
 print(prompt)
 
-#endOfPrompt = prompt[-10:]
+print('---')
 
-#print(endOfPrompt)
-
-print(max(-5, 0))
 
 def make_memories(prompt, memory):
 	prompt_components = get_prompt_components(prompt)
@@ -30,18 +27,17 @@ def get_prompt_components(prompt):
 	print(len(prompt))
 	
 	for i in range(-10, len(prompt)):
-		print(i)
 		start = max(0, i)
 		stop = i + 10
 		if(stop < len(prompt)):
-			print(True)
-			print(start)
-			print(stop)
-			#print(prompt[start:stop])
 			components.append({
 				'key': prompt[start:stop],
 				'value': prompt[stop]
 			})
+	
+	if(len(prompt.split(' ')) > 1):
+		for word in prompt.split(' '):
+			components = components + get_prompt_components(word)
 	
 	print(components)
 	
@@ -60,15 +56,18 @@ def generate_response(prompt, memory):
 	response_and_prompt = prompt
 	response = ''
 	
-	for i in range(1, 50):
-		endOfPrompt = response_and_prompt[-10:]
-		next_char = get_next_character(endOfPrompt, memory)
-		print(next_char)
+	for prompt_length in range(-10, 0):
+		for i in range(1, 50):
+			endOfPrompt = response_and_prompt[prompt_length:]
+			next_char = get_next_character(endOfPrompt, memory)
+			
+			if(next_char == ''):
+				break
+			response = response + next_char
+			response_and_prompt = response_and_prompt + next_char
 		
-		if(next_char == ''):
-			break
-		response = response + next_char
-		response_and_prompt = response_and_prompt + next_char
+		if len(response) > 0:
+			break;
 	
 	return response
 
@@ -119,7 +118,7 @@ memory = load_memory(memory_path)
 make_memories(prompt, memory)
 
 print('---')
-print(memory)
+#print(memory)
 
 response = generate_response(prompt, memory)
 
